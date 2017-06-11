@@ -1,0 +1,6 @@
+env
+rethinkdb_data
+__pycache__
+*/__pycache__
+.idea
+*.log
