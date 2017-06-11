@@ -1,7 +1,8 @@
 import rethinkdb as r
 
 from thinktwice.model import Model
-from utils import hash_salt
+from thinktwice.utils import hash_salt
+from thinktwice.utils import generate_jwt
 
 
 class User(Model):
@@ -23,7 +24,7 @@ class User(Model):
         password_hash = hash_salt(password)
         user = User.get(username)
         if user is not None and user.password == password_hash:
-            return {"message": "OK"}
+            return generate_jwt(user)
         return {"error": "Connection error", "code": 401}
 
     @staticmethod

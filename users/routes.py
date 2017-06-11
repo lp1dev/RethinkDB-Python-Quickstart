@@ -1,7 +1,7 @@
 from sanic.response import json
 from users.model import User
 from thinktwice.exceptions import ThinkTwiceException
-from thinktwice.decorators import MandatoryParams
+from thinktwice.decorators import MandatoryParams, requires_login
 
 
 def init(app):
@@ -20,5 +20,8 @@ def init(app):
             return json({"error": e.message, "code": e.code}, status=e.code)
 
     @app.route("/user/<user>", methods=['GET'])
-    async def get_user(request, user):
-        return json(User.get(user).export())
+    @requires_login
+    async def get_user(request, user, logged_user):
+        if logged_user.username == user and User.get(logged_user.username) is not None:
+            return json(User.get(user).export())
+        return json({'error': 'You cannot access these information', 'code': 403}, status=403)
